@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 public class Solution
 {
+    // ref : https://codejam.withgoogle.com/2018/challenges/00000000000000cb/dashboard/00000000000079cb
     /* Trouble Sort
         Problem
         Deep in Code Jam's secret algorithm labs, we devote countless hours to wrestling with one of the most complex problems of our time: efficiently sorting a list of integers into non-decreasing order. We have taken a careful look at the classic bubble sort algorithm, and we are pleased to announce a new variant.
