@@ -240,3 +240,11 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+
+
+###################
+# CUSTOMS:
+packages/
+.vs/
+bin/
+obj/

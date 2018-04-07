@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("GoogleCodeJam2018")]
+[assembly: AssemblyTitle("Problem1")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("GoogleCodeJam2018")]
+[assembly: AssemblyProduct("Problem1")]
 [assembly: AssemblyCopyright("Copyright © Microsoft 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("429704a2-df83-4f56-90c9-28581a9dbeae")]
+[assembly: Guid("ab05700f-dd29-49f5-9730-10264081c88d")]
 
 // Version information for an assembly consists of the following four values:
 //
