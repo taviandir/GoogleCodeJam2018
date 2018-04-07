@@ -1,5 +1,8 @@
-﻿using System;
+﻿#define DEBUG
+
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,5 +28,198 @@ public class Solution
      */
     public static void Main(string[] args)
     {
+        // NOTE : interactive problem
+
+        #if DEBUG
+        // init file path
+        string dir = Directory.GetCurrentDirectory();
+        FilePath = dir + $"\\app_input_{DateTime.UtcNow.Ticks}.log";
+        #endif
+
+        var t = int.Parse(JudgeReadLine());
+        bool failed = false;
+        for (int i = 0; i < t; ++i)
+        {
+            // NOTE : defined in the problem text as A
+            var minPreparedCells = int.Parse(JudgeReadLine());
+
+            // based on minPreparedCells, calculate smallest possible rectangle that meets the threshold
+            int MinLength = 3;
+            int maxLength = Math.Max(MinLength, Convert.ToInt32(Math.Ceiling(Math.Sqrt(minPreparedCells))) * 2);
+            int bestWidth = 1000;
+            int bestHeight = 1000;
+            int lowestSum = 1000 * 1000;
+            for (int n = MinLength; n <= maxLength; n++)
+            {
+                for (int m = MinLength; m <= maxLength; m++)
+                {
+                    var sum = n * m;
+                    if (sum >= minPreparedCells && sum < lowestSum)
+                    {
+                        bestWidth = n;
+                        bestHeight = m;
+                        lowestSum = sum;
+                    }
+                }
+            }
+
+            Log($"Best shape for {minPreparedCells}: {bestWidth} x {bestHeight} ({lowestSum})", LogSource.Log);
+
+            var field = new Field(bestWidth, bestHeight);
+            while (true)
+            {
+                // 1. write desired dig spot
+                var coords = field.DetermineBestDigSite();
+                Console.WriteLine($"{coords.X} {coords.Y}");
+
+                // 2. receive feedback on actual dig spot
+                string row = JudgeReadLine();
+                var split = row.Split(' ');
+                int x = int.Parse(split[0]);
+                int y = int.Parse(split[1]);
+
+                // 3. interpret feedback ("0 0" = Completed, "-1 -1" means fail)
+                if (x == -1 && y == -1)
+                {
+                    failed = true;
+                    break;
+                }
+                else if (x == 0 && y == 0)
+                {
+                    break;
+                }
+
+                field.MarkAsPrepared(x, y);
+            }
+
+            if (failed) break;
+        }
+    }
+
+    private class Field
+    {
+        private List<Cell> Cells { get; }
+
+        private int MinWidth { get; } = 1;
+        private int MaxWidth { get; }
+
+        private int MinHeight { get; } = 1;
+        private int MaxHeight { get; }
+
+        public Field(int width, int height)
+        {
+            MaxWidth = width;
+            MaxHeight = height;
+            Cells = new List<Cell>(width * height);
+
+            // 1-based 
+            for (int w = 1; w <= width; ++w)
+            {
+                for (int h = 1; h <= height; ++h)
+                {
+                    Cells.Add(new Cell(w, h));
+                }
+            }
+        }
+
+        public void MarkAsPrepared(int x, int y)
+        {
+            var match = Cells.FirstOrDefault(c => c.X == x && c.Y == y);
+            if (match != null)
+            {
+                match.IsPrepared = true;
+            }
+        }
+
+        public Coords DetermineBestDigSite()
+        {
+            int bestWidth = 0, bestHeight = 0, highestUnpreparedScore = 0;
+
+            for (int x = 2; x < MaxWidth; ++x)
+            {
+                for (int y = 2; y < MaxHeight ; ++y)
+                {
+                    int minX = x - 1;
+                    int maxX = x + 1;
+                    int minY = y - 1;
+                    int maxY = y + 1;
+
+                    // get all from w -1 and w + 1 to h - 1 to h + 1 (a 3x3 grid)
+                    // calculate which one is best
+                    var score = Cells.Count(c =>
+                        c.X >= minX && c.X <= maxX && 
+                        c.Y >= minY && c.Y <= maxY && 
+                        !c.IsPrepared);
+                    if (score > highestUnpreparedScore)
+                    {
+                        highestUnpreparedScore = score;
+                        bestWidth = x;
+                        bestHeight = y;
+                    }
+                }
+            }
+
+            return new Coords(bestWidth, bestHeight);
+        }
+    }
+
+    private class Coords
+    {
+        public Coords(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
+
+        public int X { get; }
+        public int Y { get; }
+    }
+
+    private class Cell
+    {
+        public Cell(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
+
+        public int X { get; }
+        public int Y { get; }
+        public bool IsPrepared { get; set; }
+    }
+
+    private static string FilePath = null;
+    private static void Log(string value, LogSource source)
+    {
+        #if DEBUG
+        string prefix = source == LogSource.Input ? "[Input] " : source == LogSource.Output ? "[Output] " : "[Log] ";
+        File.AppendAllLines(FilePath, new [] { $"{prefix}{value}" });
+        #endif
+    }
+
+    private enum LogSource
+    {
+        Input = 0,
+        Output = 1,
+        Log = 2
+    }
+
+    /// <summary>
+    /// Reads a line from the judge.
+    /// </summary>
+    private static string JudgeReadLine()
+    {
+        string row = Console.ReadLine();
+        Log(row, LogSource.Input);
+        return row;
+    }
+
+    /// <summary>
+    /// Writes a line to the judge.
+    /// </summary>
+    private static void JudgeWriteLine(string row)
+    {
+        Log(row, LogSource.Output);
+        Console.WriteLine(row);
     }
 }
