@@ -73,6 +73,8 @@ public class Solution /* Problem 1 */
             possibilities = null;
             GC.Collect();
             possibilities = iterationVariations;
+            iterationVariations = null;
+            GC.Collect();
         }
 
         return possibilities.Select(p => CalculateScore(p, n)).Max();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -43,29 +44,102 @@ public class Solution /* Problem 2 */
                 };
                 signs.Add(sign);
             }
+
+            var result = Algorithm(signs);
+            Console.WriteLine($"Case #{t + 1}: {result.Item1} {result.Item2}");
         }
     }
 
     private static Tuple<int, int> Algorithm(List<Sign> signs)
     {
-        List<List<int>> sequences = new List<List<int>>();
-
-        for (int i = 0; i < signs.Count; i++)
+        List<Combination> combinations = new List<Combination>();
+        var allMs = signs.Select(s => s.M).Distinct().ToList();
+        var allNs = signs.Select(s => s.N).Distinct().ToList();
+        foreach (var oneM in allMs)
         {
-            var s = signs[i];
-            // TODO
+            foreach (var oneN in allNs)
+            {
+                combinations.Add(new Combination
+                {
+                    M = oneM,
+                    N = oneN,
+                    Sequences = new List<List<int>>()
+                });
+            }
         }
 
-        int longestSequence = sequences.Select(s => s.Count).Max();
-        int validSequencesCount = 0; // TODO : substract duplicates!
-        return new Tuple<int, int>(longestSequence, validSequencesCount);
+        foreach (var combo in combinations)
+        {
+            List<int> currentSequence = new List<int>();
+            foreach (var sign in signs)
+            {
+                if (combo.M == sign.M || combo.N == sign.N)
+                {
+                    currentSequence.Add(sign.AtKm); // AtKm or i ?
+                }
+                else
+                {
+                    combo.Sequences.Add(currentSequence);
+                    currentSequence = new List<int>();
+                }
+            }
+
+            // if it ended "in sequence"
+            if (currentSequence.Count > 0)
+            {
+                combo.Sequences.Add(currentSequence);
+            }
+        }
+
+        int longestSequenceCount = combinations.SelectMany(c => c.Sequences.Select(ss => ss.Count)).Max();
+
+        var longestSequences = combinations.Where(c => c.Sequences.Any(ss => ss.Count == longestSequenceCount)).ToList();
+        // TODO : substract duplicates!
+        var longestSequencesSequence =
+            longestSequences.SelectMany(c => c.Sequences.Where(s => s.Count == longestSequenceCount)).ToList();
+
+        int validSequencesCount = CountDistinct(longestSequencesSequence); 
+        return new Tuple<int, int>(longestSequenceCount, validSequencesCount);
     }
 
-    private class Sequence
+    private static int CountDistinct(List<List<int>> lists)
     {
-        public int? M { get; set; }
-        public int? N { get; set; }
-        public List<int> Positions { get; set; }
+        int count = 0;
+        var checkedSequences = new List<List<int>>();
+        foreach (var list in lists)
+        {
+            if (checkedSequences.Count == 0)
+            {
+                checkedSequences.Add(list);
+                count += 1;
+                continue;
+            }
+
+            bool isDuplicate = checkedSequences.Any(chkSeq =>
+            {
+                for (int i = 0; i < chkSeq.Count; i++)
+                {
+                    if (list[i] != chkSeq[i]) return false;
+                }
+
+                return true;
+            });
+
+            if (!isDuplicate)
+            {
+                checkedSequences.Add(list);
+                count += 1;
+            }
+        }
+
+        return count;
+    }
+
+    private class Combination
+    {
+        public int M { get; set; }
+        public int N { get; set; }
+        public List<List<int>> Sequences { get; set; }
     }
 
     private class Sign
