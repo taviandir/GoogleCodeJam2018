@@ -60,7 +60,20 @@ public class Solution /* Problem 1 */
                 {
                     var copy = it.ToList();
                     copy[t] += 1;
-                    // TODO : dont add duplicates
+
+                    // WITH THIS : TIME_LIMIT_EXCEEDED
+                    //bool isDuplicate = possibilities.Any(chkSeq =>
+                    //{
+                    //    for (int ii = 0; ii < chkSeq.Count; ii++)
+                    //    {
+                    //        if (copy[ii] != chkSeq[ii]) return false;
+                    //    }
+
+                    //    return true;
+                    //});
+
+                    //if (isDuplicate) continue;
+
                     iterationVariations.Add(copy);
                 }
 

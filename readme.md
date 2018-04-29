@@ -1,3 +1,4 @@
+
 # Google Code Jam 2018
 My submissions to the Google Code Jam 2018.
 
@@ -22,9 +23,30 @@ Failed attempts: 0
  - Test Set 2 (Hidden) [20pt]: Passed
 
 #### Problem 4
-Problem 4 of the round was not attempted.
+Not attempted.
 
 Total points: 43
 
-### Round 1
+---
+
+### Round 1B
+#### Problem 1
+Failed attempts: 3
+
+ - Test Set 1 (Visible) [5pt]: Failed (MEMORY_LIMIT_EXCEEDED)
+
+#### Problem 2
+Failed attempts: 0
+
+ - Test Set 1 (Visible) [10pt]: Passed 
+ - Test Set 2 (Hidden) [20pt]: Failed (MEMORY_LIMIT_EXCEEDED)
+
+#### Problem 3
+Not attempted.
+
+
+Total points: 10
+
+---
+
 
